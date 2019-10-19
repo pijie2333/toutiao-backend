@@ -11,7 +11,7 @@ from . import constants
 from utils import parser
 from models import db
 from models.user import User, UserProfile
-# from utils.jwt_util import generate_jwt
+from utils.jwt_util import generate_jwt
 # from cache import user as cache_user
 from utils.limiter import limiter as lmt
 from utils.decorators import set_db_to_read, set_db_to_write
@@ -48,13 +48,24 @@ class AuthorizationResource(Resource):
         'put': [set_db_to_read]
     }
 
-    def _generate_tokens(self, user_id,with_refresh_token=True):
+    def _generate_tokens(self, user_id,is_refresh=False):
         """
         生成token 和refresh_token
         :param user_id: 用户id
-        :return: token, refresh_token
+        :return: token2小时, refresh_token14天
         """
-        pass
+        # 生成当前时间，使用时间差模块，计算出token的有效期。
+        now = datetime.utcnow()
+        exp = now + timedelta(hours=current_app.config['JWT_EXPIRY_HOURS'])
+        token = generate_jwt({'user_id':user_id,'refresh':False},expiry=exp)
+        # 定义标记
+        # is_refresh = False
+        refresh_token = None
+        if is_refresh is False:
+            refresh_exp = now + timedelta(days=current_app.config['JWT_REFRESH_DAYS'])
+            refresh_token = generate_jwt({'user_id': user_id,'refresh':True}, expiry=refresh_exp)
+
+        return token,refresh_token
 
     def post(self):
         """
@@ -103,9 +114,15 @@ class AuthorizationResource(Resource):
         return {'token': token, 'refresh_token': refresh_token}, 201
 
 
-
-
-
+    def put(self):
+        # token的刷新：必须携带refresh_token,需要区分token和refresh_token！！！
+        # 需要在生成token时，不同的token进行标记。
+        # 返回一个新token
+        if g.user_id and g.refresh is True:
+            token,refresh_token = self._generate_tokens(g.user_id,is_refresh=True)
+            return {'token':token},201
+        else:
+            return {'message':'authorized error'},401
 
 
 
