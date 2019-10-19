@@ -82,8 +82,8 @@ def create_app(config, enable_config_file=False):
 
 
     # # 添加请求钩子
-    # from utils.middlewares import jwt_authentication
-    # app.before_request(jwt_authentication)
+    from utils.middlewares import jwt_authentication
+    app.before_request(jwt_authentication)
 
     # 注册用户模块蓝图
     from .resources.user import user_bp

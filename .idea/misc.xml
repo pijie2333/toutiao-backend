@@ -109,5 +109,5 @@
       </profile-state>
     </entry>
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.6.3 virtualenv at ~/.virtualenvs/spider_py3" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Remote Python 3.6.7 (sftp://python@10.211.55.7:22/home/python/.virtualenvs/toutiao/bin/python)" project-jdk-type="Python SDK" />
 </project>
