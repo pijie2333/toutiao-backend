@@ -60,10 +60,10 @@ class DefaultConfig(object):
         '127.0.0.1:9200'
     ]
 
-    QINIU_ACCESS_KEY = ''
-    QINIU_SECRET_KEY = ''
-    QINIU_BUCKET_NAME = ''
-    QINIU_DOMAIN = ''
+    QINIU_ACCESS_KEY = 'SmdtGrstU8mkcHcfLIpY-C_lHIa8brda55Qz4j30'
+    QINIU_SECRET_KEY = 'JWpOm6_E7cSgl_akYOVCSuiOs6JlqElRIaxx_JO7'
+    QINIU_BUCKET_NAME = 'tbd45'
+    QINIU_DOMAIN = 'http://pzm8w0o88.bkt.clouddn.com/'
 
     RABBITMQ = 'amqp://python:rabbitmqpwd@localhost:5672/toutiao'
 
