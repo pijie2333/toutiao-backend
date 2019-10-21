@@ -54,3 +54,14 @@ class PhotoResource(Resource):
 
 
 
+# 缓存工具的使用
+from cache import user
+
+class UserResource(Resource):
+
+    def get(self,target):
+        us = user.UserCache(target)
+        data = us.get()
+        return data
+
+
