@@ -9,6 +9,13 @@ from datetime import datetime
 # from cache import user as cache_user
 
 
+def check_image(image):
+    if imghdr.what(image):
+        return image
+    else:
+        raise ValueError('type error')
+
+
 
 def email(email_str):
     """
