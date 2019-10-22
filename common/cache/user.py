@@ -1,5 +1,6 @@
 import json
 from flask import current_app
+from sqlalchemy.orm import load_only
 
 from models.user import User
 from . import constants
@@ -10,7 +11,9 @@ from . import constants
 # 类方法：类属性，类和实例可以调用，属性是固定，不会因为不同的类属性不同。
 # 实例方法：实例属性，实例可以调用，属性是根据具体对象的不同，而不同。
 # 静态方法：不需要操作类属性和实例属性，仅仅实现功能，可以定义静态方法。
-#
+# 需要异常处理的代码：
+# 1、IO操作，网络io和磁盘io
+# 2、参数校验、类型转换等。a = 'a'
 
 class UserCache(object):
 
@@ -21,10 +24,23 @@ class UserCache(object):
     def query(self):
         r = current_app.redis_cluster
         # 4.1查询mysql，判断查询结果
-        user = User.query.filter_by(id=self.user_id).first()
+        try:
+            user = User.query.options(load_only(
+                User.id,
+                User.mobile,
+                User.profile_photo,
+                User.introduction
+            )).filter_by(id=self.user_id).first()
+        except Exception as e:
+            current_app.logger.error(e)
+            user = None
         # 4.2如果mysql没有，在redis中故意存储无效数据；解决缓存击穿问题！！
         if user is None:
-            r.setex(self.key, constants.CacheNotExistsTTL.get_val(), '-1')
+            try:
+                r.setex(self.key, constants.CacheNotExistsTTL.get_val(), '-1')
+            except Exception as e:
+                current_app.logger.error(e)
+            return None
         # 4.3否则，把mysql查询结果缓存到redis中，解决缓存雪崩问题！！
         else:
             # 查询结果的对象转成字典数据，转成json，
