@@ -62,6 +62,8 @@ class UserResource(Resource):
     def get(self,target):
         us = user.UserCache(target)
         data = us.get()
+        if data is None:
+            return '-1'
         return data
 
 
